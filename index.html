@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bijak Grammar - English Quiz</title>
+    <style>
+        :root {
+            --primary: #4cc9f0;
+            --secondary: #4895ef;
+            --dark-blue: #3f37c9;
+            --purple: #7209b7;
+            --pink: #f72585;
+            --success: #4ade80;
+            --error: #f87171;
+            --light: #f8f9fa;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Ubuntu', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            border: 4px solid var(--secondary);
+        }
+
+        h1 {
+            color: var(--dark-blue);
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 0px #bee3f8;
+        }
+
+        p.subtitle {
+            color: #64748b;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .screen {
+            display: none;
+        }
+
+        .active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Setup Screen Buttons */
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        button {
+            background: white;
+            border: 3px solid var(--secondary);
+            color: var(--dark-blue);
+            padding: 15px 25px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 0px var(--secondary);
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 0px var(--secondary);
+            background-color: #f0f9ff;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0 0px 0px var(--secondary);
+        }
+
+        button.btn-start {
+            background: var(--pink);
+            color: white;
+            border-color: #db2777;
+            box-shadow: 0 4px 0px #db2777;
+            font-size: 1.4rem;
+            margin-top: 20px;
+        }
+
+        button.btn-start:hover {
+            background: #f43f5e;
+            box-shadow: 0 6px 0px #db2777;
+        }
+
+        /* Quiz Screen */
+        .progress-bar {
+            width: 100%;
+            height: 15px;
+            background: #e2e8f0;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .quiz-stats {
+            display: flex;
+            justify-content: space-between;
+            color: #475569;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .question-box {
+            background: #f8fafc;
+            border: 2px dashed var(--secondary);
+            border-radius: 16px;
+            padding: 25px;
+            font-size: 1.3rem;
+            color: #1e293b;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+
+        .option-btn {
+            text-align: left;
+            padding: 15px 20px;
+            font-size: 1.1rem;
+            background: white;
+            border: 2px solid #cbd5e1;
+            box-shadow: 0 4px 0px #cbd5e1;
+        }
+
+        .option-btn:hover {
+            border-color: var(--secondary);
+            box-shadow: 0 6px 0px var(--secondary);
+        }
+
+        /* Feedback Colors */
+        .option-btn.correct {
+            background: var(--success) !important;
+            border-color: #22c55e !important;
+            color: white !important;
+            box-shadow: 0 4px 0px #22c55e !important;
+        }
+
+        .option-btn.wrong {
+            background: var(--error) !important;
+            border-color: #ef4444 !important;
+            color: white !important;
+            box-shadow: 0 4px 0px #ef4444 !important;
+        }
+
+        /* Result Screen */
+        .score-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #f0fdf4;
+            border: 5px solid var(--success);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            margin: 20px auto;
+        }
+
+        .score-num {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--dark-blue);
+        }
+
+        .feedback-text {
+            font-size: 1.4rem;
+            font-weight: bold;
+            color: var(--purple);
+            margin: 15px 0 25px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div id="home-screen" class="screen active">
+            <h1>🌟 Bijak Grammar 🌟</h1>
+            <p class="subtitle">Master English Grammar Easily!</p>
+            
+            <p style="font-weight: bold; color: #475569; margin-bottom: 10px;">Choose Number of Questions:</p>
+            <div style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+                <button type="button" class="count-btn" onclick="selectCount(10, this)" style="flex: 1;">10</button>
+                <button type="button" class="count-btn" onclick="selectCount(20, this)" style="flex: 1;">20</button>
+                <button type="button" class="count-btn" onclick="selectCount(50, this)" style="flex: 1;">50</button>
+            </div>
+
+            <div class="btn-group">
+                <button class="btn-start" onclick="startQuiz()">🚀 Start Quiz</button>
+            </div>
+        </div>
+
+        <div id="quiz-screen" class="screen">
+            <div class="quiz-stats">
+                <span id="question-number">Question: 1/10</span>
+                <span id="score-counter">Score: 0</span>
+            </div>
+            <div class="progress-bar">
+                <div id="progress-fill" class="progress-fill"></div>
+            </div>
+            <div id="question-text" class="question-box">
+                Loading question...
+            </div>
+            <div id="options-container" class="options-grid">
+                </div>
+        </div>
+
+        <div id="result-screen" class="screen">
+            <h1>🎉 Quiz Completed! 🎉</h1>
+            <div class="score-circle">
+                <div id="final-score" class="score-num">0</div>
+                <div style="color: #64748b; font-weight: bold;">Score</div>
+            </div>
+            <div id="feedback-msg" class="feedback-text">Well Done!</div>
+            <p id="detailed-score" style="margin-bottom: 25px; color: #475569; font-weight: bold;"></p>
+            <button onclick="restartQuiz()" style="background: var(--primary); color: white; border-color: #0284c7; box-shadow: 0 4px 0px #0284c7; width: 100%;">🔄 Play Again</button>
+        </div>
+    </div>
+
+    <script>
+        // Bank Soalan (60 Soalan Unik Sekolah Rendah - Nouns, Verbs, Pronouns, Adjectives, Prepositions, etc.)
+        const questionBank = [
+            { q: "The cat ______ sleeping on the mat yesterday.", a: ["was", "is", "are", "were"], c: "was" },
+            { q: "Every morning, Encik Ali ______ his car to work.", a: ["drive", "drives", "driving", "driven"], c: "drives" },
+            { q: "Sarah and Aminah ______ best friends since kindergarten.", a: ["is", "am", "are", "was"], c: "are" },
+            { q: "Look! The birds ______ in the sky right now.", a: ["flies", "is flying", "are flying", "flew"], c: "are flying" },
+            { q: "He didn't ______ his homework last night.", a: ["do", "does", "did", "done"], c: "do" },
+            { q: "This is ______ apple. It is very juicy.", a: ["a", "an", "the", "some"], c: "an" },
+            { q: "The children played ______ in the playground.", a: ["happily", "happy", "happiness", "sad"], c: "happily" },
+            { q: "My father bought a ______ of bread from the bakery.", a: ["loaf", "bar", "bunch", "slice"], c: "loaf" },
+            { q: "Whose bag is this? It belongs to Mary. It is ______.", a: ["hers", "his", "mine", "theirs"], c: "hers" },
+            { q: "The mouse ran ______ the hole when it saw the cat.", a: ["into", "on", "over", "under"], c: "into" },
+            { q: "Elephants are ______ than cows.", a: ["big", "bigger", "biggest", "more big"], c: "bigger" },
+            { q: "We ______ to the zoo last weekend.", a: ["go", "goes", "went", "going"], c: "went" },
+            { q: "Please put the books ______ the shelf.", a: ["on", "in", "at", "under"], c: "on" },
+            { q: "How ______ sugar do you want in your tea?", a: ["many", "much", "few", "any"], c: "much" },
+            { q: "There are many ______ swimming in the pond.", a: ["fish", "fishes", "fishs", "fishing"], c: "fish" },
+            { q: "I have two ______ but only one knife.", a: ["forks", "forkes", "fork", "forking"], c: "forks" },
+            { q: "The sun ______ in the east.", a: ["rise", "rises", "rising", "rose"], c: "rises" },
+            { q: "Are you ______ to the library this evening?", a: ["go", "goes", "going", "went"], c: "going" },
+            { q: "She is the ______ girl in our classroom.", a: ["tall", "taller", "tallest", "more tall"], c: "tallest" },
+            { q: "______ did you buy this beautiful dress? At the mall.", a: ["Where", "What", "Who", "Why"], c: "Where" },
+            { q: "The boys ______ football when it started to rain.", a: ["play", "were playing", "was playing", "played"], c: "were playing" },
+            { q: "My brother is afraid ______ spiders.", a: ["of", "at", "with", "for"], c: "of" },
+            { q: "They ______ completed their English project yet.", a: ["has not", "have not", "is not", "are not"], c: "have not" },
+            { q: "This car belongs to Mr. Brown. It is ______ car.", a: ["his", "him", "he", "himself"], c: "his" },
+            { q: "Can I have ______ water, please? I am thirsty.", a: ["some", "any", "many", "an"], c: "some" },
+            { q: "The teacher told us to listen ______.", a: ["careful", "carefully", "carefulness", "caring"], c: "carefully" },
+            { q: "A flock of ______ flew over the lake.", a: ["birds", "cows", "sheep", "monkeys"], c: "birds" },
+            { q: "My mother cut the cake with a sharp ______.", a: ["knife", "knives", "knifing", "knifes"], c: "knife" },
+            { q: "______ is your English teacher? Mr. Lim.", a: ["Who", "What", "Which", "Where"], c: "Who" },
+            { q: "We should cross the road ______ at the zebra crossing.", a: ["safely", "safe", "safety", "safer"], c: "safely" },
+            { q: "I can see three ______ playing in the garden.", a: ["child", "children", "childrens", "childs"], c: "children" },
+            { q: "The ice cream melted because it was ______ hot.", "a": ["too", "to", "two", "tough"], c: "too" },
+            { q: "Neither Sarah nor her friends ______ going to the party.", a: ["is", "are", "am", "was"], c: "are" },
+            { q: "My uncle lives ______ Penang.", a: ["at", "on", "in", "by"], c: "in" },
+            { q: "Don't make noise. The baby ______.", a: ["sleeps", "is sleeping", "sleped", "was sleep"], c: "is sleeping" },
+            { q: "She writes ______ than her sister.", a: ["neatly", "more neatly", "most neatly", "neat"], c: "more neatly" },
+            { q: "I am hungry ______ there is no food in the kitchen.", a: ["but", "and", "or", "because"], c: "but" },
+            { q: "You ______ wash your hands before eating.", a: ["must", "must not", "cannot", "may"], c: "must" },
+            { q: "That laptop is ______.", a: ["my", "mine", "me", "myself"], c: "mine" },
+            { q: "The test was easy, ______ everyone passed.", a: ["so", "but", "because", "although"], c: "so" },
+            { q: "A ______ of monkeys is climbing the trees.", a: ["troop", "herd", "pack", "school"], c: "troop" },
+            { q: "The plane took ______ at 8:00 AM.", a: ["off", "on", "up", "in"], c: "off" },
+            { q: "He is ______ honest boy.", a: ["a", "an", "the", "any"], c: "an" },
+            { q: "These shoes are too small. I need ______ ones.", a: ["large", "larger", "largest", "more large"], c: "larger" },
+            { q: "They ______ watch television on weekdays.", a: ["do not", "does not", "is not", "has not"], c: "do not" },
+            { q: "He ran fast ______ he missed the school bus.", a: ["but", "and", "so", "because"], c: "but" },
+            { q: "The dog wagged ______ tail happily.", a: ["its", "it's", "it", "his"], c: "its" },
+            { q: "We ______ delicious fried rice for dinner yesterday.", a: ["eat", "ate", "eaten", "eating"], c: "ate" },
+            { q: "______ did you leave your umbrella? At school.", a: ["Where", "When", "Why", "Who"], c: "Where" },
+            { q: "This is the ______ book I have ever read.", a: ["good", "better", "best", "goodest"], c: "best" },
+            { q: "There isn't ______ milk left in the fridge.", a: ["any", "some", "many", "no"], c: "any" },
+            { q: "The man ______ lives next door is a doctor.", a: ["who", "which", "whose", "whom"], c: "who" },
+            { q: "He likes to play ______ piano.", a: ["a", "an", "the", "some"], c: "the" },
+            { q: "She hurt ______ while riding her bicycle.", a: ["herself", "himself", "myself", "yourself"], c: "herself" },
+            { q: "They went to bed early ______ they were tired.", a: ["because", "but", "so", "although"], c: "because" },
+            { q: "The library is located ______ the school and the canteen.", a: ["between", "among", "through", "against"], c: "between" },
+            { q: "A ______ of cattle was grazing in the field.", a: ["herd", "flock", "pride", "pack"], c: "herd" },
+            { q: "Please speak ______; the baby is sleeping.", a: ["quietly", "loudly", "soft", "quick"], c: "quietly" },
+            { q: "The stars shine brightly ______ night.", a: ["at", "on", "in", "during"], c: "at" },
+            { q: "How ______ books did you borrow today?", a: ["many", "much", "any", "some"], c: "many" }
+        ];
+
+        // App States
+        let totalQuestionsSelected = 10;
+        let currentQuizQuestions = [];
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let canAnswer = true;
+
+        // Set Default Selection
+        window.onload = function() {
+            const defaultBtn = document.querySelector('.count-btn');
+            if (defaultBtn) selectCount(10, defaultBtn);
+        };
+
+        // Fungsi memilih bilangan soalan
+        function selectCount(count, element) {
+            totalQuestionsSelected = count;
+            
+            // Reset style untuk semua butang pilihan
+            document.querySelectorAll('.count-btn').forEach(btn => {
+                btn.style.backgroundColor = 'white';
+                btn.style.color = 'var(--dark-blue)';
+                btn.style.borderColor = 'var(--secondary)';
+            });
+
+            // Highlight butang yang dipilih
+            element.style.backgroundColor = 'var(--secondary)';
+            element.style.color = 'white';
+        }
+
+        // Fungsi memulakan Kuiz (Rawakkan soalan tanpa berulang)
+        function startQuiz() {
+            // Rawakkan (Shuffle) bank soalan
+            const shuffled = [...questionBank].sort(() => 0.5 - Math.random());
+            
+            // Ambil bilangan soalan mengikut pilihan user
+            currentQuizQuestions = shuffled.slice(0, totalQuestionsSelected);
+            
+            // Reset variables
+            currentQuestionIndex = 0;
+            score = 0;
+            
+            // Tukar Skrin ke Quiz Screen
+            switchScreen('quiz-screen');
+            loadQuestion();
+        }
+
+        // Fungsi memaparkan soalan semasa
+        function loadQuestion() {
+            canAnswer = true;
+            const qData = currentQuizQuestions[currentQuestionIndex];
+            
+            // Kemaskini teks stat & progress bar
+            document.getElementById('question-number').innerText = `Question: ${currentQuestionIndex + 1}/${totalQuestionsSelected}`;
+            document.getElementById('score-counter').innerText = `Score: ${score}`;
+            
+            const progressPercent = (currentQuestionIndex / totalQuestionsSelected) * 100;
+            document.getElementById('progress-fill').style.width = `${progressPercent}%`;
+
+            // Papar Soalan
+            document.getElementById('question-text').innerText = qData.q;
+
+            // Papar Pilihan Jawapan (Butang)
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = ''; // Clear options terdahulu
+
+            qData.a.forEach(option => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(option, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        // Fungsi memeriksa jawapan betul/salah
+        function checkAnswer(selectedOption, clickedButton) {
+            if (!canAnswer) return; // Mengelakkan double click
+            canAnswer = false;
+
+            const qData = currentQuizQuestions[currentQuestionIndex];
+            
+            if (selectedOption === qData.c) {
+                // Betul
+                clickedButton.classList.add('correct');
+                score++;
+                document.getElementById('score-counter').innerText = `Score: ${score}`;
+            } else {
+                // Salah
+                clickedButton.classList.add('wrong');
+                // Tunjukkan jawapan yang betul
+                const buttons = document.querySelectorAll('.option-btn');
+                buttons.forEach(btn => {
+                    if (btn.innerText === qData.c) {
+                        btn.classList.add('correct');
+                    }
+                });
+            }
+
+            // Tunggu 1.5 saat sebelum masuk ke soalan seterusnya
+            setTimeout(() => {
+                currentQuestionIndex++;
+                if (currentQuestionIndex < totalQuestionsSelected) {
+                    loadQuestion();
+                } else {
+                    showResult();
+                }
+            }, 1500);
+        }
+
+        // Fungsi memaparkan keputusan akhir
+        function showResult() {
+            switchScreen('result-screen');
+            document.getElementById('final-score').innerText = score;
+            document.getElementById('detailed-score').innerText = `You answered ${score} out of ${totalQuestionsSelected} questions correctly!`;
+
+            // Memberi maklumbalas berdasarkan markah peratusan
+            const percentage = (score / totalQuestionsSelected) * 100;
+            let feedback = "";
+            if (percentage === 100) {
+                feedback = "👑 Perfect Score! You are a Grammar Genius!";
+            } else if (percentage >= 80) {
+                feedback = "🌟 Excellent! Brilliant English skills!";
+            } else if (percentage >= 50) {
+                feedback = "👍 Good Job! Keep practicing!";
+            } else {
+                feedback = "💪 Don't give up! Try again to score higher!";
+            }
+            document.getElementById('feedback-msg').innerText = feedback;
+        }
+
+        // Fungsi restart kuiz kembali ke menu utama
+        function restartQuiz() {
+            switchScreen('home-screen');
+        }
+
+        // Fungsi menukar skrin aplikasi
+        function switchScreen(screenId) {
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            document.getElementById(screenId).classList.add('active');
+        }
+    </script>
+</body>
+</html>
